@@ -469,6 +469,8 @@ if __name__ == '__main__':
                 i, dset in enumerate(probe_dataset_paths)]
     save_dirs = [os.path.join('models', dset.name) for dset in datasets]
     
+    fileRoot = os.path.basename(probe_dataset_paths[idx].split('.cs')[0])
+
     model_paths = [model_paths[idx]]
     model_names = [model_names[idx]]
     save_dirs = [save_dirs[idx]]
