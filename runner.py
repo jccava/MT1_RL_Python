@@ -381,150 +381,152 @@ if __name__ == '__main__':
                 i, dset in enumerate(train_dataset_paths)]
     save_dirs = [os.path.join('models', dset.name) for dset in datasets]
     
-    idx = 1
-    
-    fileRoot = os.path.basename(train_dataset_paths[idx].split('.cs')[0])
-    
-    model_paths = [model_paths[idx]]
-    model_names = [model_names[idx]]
-    save_dirs = [save_dirs[idx]]
-    datasets = [datasets[idx]]
-    
-    for save_dir in save_dirs:
-        if not os.path.exists(save_dir):
-            os.mkdir(save_dir)
-    # runner = ExperimentManager("train", datasets, save_dirs, unique_lrs=False, unique_init=False, phase="train", dev='cpu')
-    runner = ExperimentManager.from_trained("train", datasets, model_paths, unique_lrs=False, unique_init=False, phase="train", dev='cpu')
-    
-    runner.save_dirs = save_dirs
-    runner.load(model_names)
-    runner.get_subject_accuracy()
-    print("got subject accuracy")
-    runner.get_model_accuracy()
-    print("got model accuracy")
-    runner.get_subject_choice_probs()
-    print("got subject choice probs")  
-    
-    
-    fig = plt.figure()
-    axes = fig.add_axes([0.2, 0.2, 0.6, 0.6])
-    typeStr = "subject_behavior"
-    runner.plot_learning_curves(axes, type = typeStr, window_size = 200)
-    
-    plt.legend()
-    plt.show()
-    plt.savefig(fileRoot + "_" + typeStr + ".svg");
-    
+    for idx in range(len(train_dataset_paths)):
         
-    fig = plt.figure()
-    axes = fig.add_axes([0.2, 0.2, 0.6, 0.6])
-    typeStr = "free_behavior"
-    runner.plot_learning_curves(axes, type = typeStr, window_size = 200)
-   
-    plt.legend()
-    plt.show()
-    plt.savefig(fileRoot + "_" + typeStr + ".svg");
-   
+        # idx = 1
         
-    fig = plt.figure()
-    axes = fig.add_axes([0.2, 0.2, 0.6, 0.6])
-    typeStr = "subject_probs"
-    runner.plot_learning_curves(axes, type = typeStr, window_size = 200)
-    
-    plt.legend()
-    plt.show()
-    plt.savefig(fileRoot + "_" + typeStr + ".svg");
-   
-
-        # if type == 'free_behavior':
-        # elif type == 'subject_probs':
-        # elif type == 'subject_behavior':
-
+        fileRoot = os.path.basename(train_dataset_paths[idx].split('.cs')[0])
+        
+        model_path = [model_paths[idx]]
+        model_name = [model_names[idx]]
+        save_dir = [save_dirs[idx]]
+        dataset = [datasets[idx]]
+        
+        for sd in save_dir:
+            if not os.path.exists(sd):
+                os.mkdir(sd)
+        # runner = ExperimentManager("train", datasets, save_dirs, unique_lrs=False, unique_init=False, phase="train", dev='cpu')
+        runner = ExperimentManager.from_trained("train", dataset, model_path, unique_lrs=False, unique_init=False, phase="train", dev='cpu')
+        
+        runner.save_dirs = save_dir
+        runner.load(model_name)
+        runner.get_subject_accuracy()
+        print("got subject accuracy")
+        runner.get_model_accuracy()
+        print("got model accuracy")
+        runner.get_subject_choice_probs()
+        print("got subject choice probs")  
+        
+        
+        fig = plt.figure()
+        axes = fig.add_axes([0.2, 0.2, 0.6, 0.6])
+        typeStr = "subject_behavior"
+        runner.plot_learning_curves(axes, type = typeStr, window_size = 200)
+        
+        plt.legend()
+        plt.show()
+        plt.savefig(fileRoot + "_" + typeStr + ".svg");
+        
             
-    # sys.exit("Finished script")
-
-
-
-    # runner.fit(2000, mp=True)
-    # with open(os.path.join('models', 'train_class_lrs_class_init.pkl'), 'wb') as f:
-    #     pickle.dump(runner, f)
-    del runner
-
-    probe_dataset_paths = ['data_files/fixed_jeevesprobe_2afc_og.csv', 'data_files/fixed_woosterprobe_2afc_og.csv',
-                           'data_files/fixed_jeevesprobe_4afc_og.csv', 'data_files/fixed_woosterprobe_4afc_og.csv',
-                           'data_files/fixed_jocamoprobe_4afc_og.csv']
-    
-    model_paths = ['models/fixed_jeevesprobe_2afc_og/Asnapshot_final_390.pkl', 'models/fixed_woosterprobe_2afc_og/Asnapshot_final_540.pkl',
-                           'models/fixed_jeevesprobe_4afc_og/Asnapshot_final_1999.pkl', 'models/fixed_woosterprobe_4afc_og/Asnapshot_final_1999.pkl',
-                           'models/fixed_jocamoprobe_4afc_og/Asnapshot_final_1999.pkl']
-    
-    model_names = ['Asnapshot_final_390.pkl', 'Asnapshot_final_540.pkl',
-                           'Asnapshot_final_1999.pkl', 'Asnapshot_final_1999.pkl',
-                           'Asnapshot_final_1999.pkl']
-
-
-
-    trials_to_load = [40000, 40000, 130000, 130000, 130000]
-    datasets = [MTurk1BehaviorData(dset, os.path.basename(dset.split('.cs')[0]), trials_to_load=trials_to_load[i], dev='cpu') for
-                i, dset in enumerate(probe_dataset_paths)]
-    save_dirs = [os.path.join('models', dset.name) for dset in datasets]
-    
-    fileRoot = os.path.basename(probe_dataset_paths[idx].split('.cs')[0])
-
-    model_paths = [model_paths[idx]]
-    model_names = [model_names[idx]]
-    save_dirs = [save_dirs[idx]]
-    datasets = [datasets[idx]]
-    
-  
-    for save_dir in save_dirs:
-        if not os.path.exists(save_dir):
-            os.mkdir(save_dir)
-    # runner = ExperimentManager("probe", datasets, save_dirs, unique_lrs=False, unique_init=False, phase="probe", dev='cpu')
-    # runner = ExperimentManager("probe", datasets, save_dirs, unique_lrs=False, unique_init=False, phase="probe", dev='cpu')
-    runner = ExperimentManager.from_trained("probe", datasets, model_paths, unique_lrs=False, unique_init=False, phase="probe", dev='cpu')
-    
-    
-    runner.save_dirs = save_dirs
-    runner.load(model_names)
-    runner.get_subject_accuracy()
-    print("got subject accuracy")
-    runner.get_model_accuracy()
-    print("got model accuracy")
-    runner.get_subject_choice_probs()
-    print("got subject choice probs")
-    
-    
-    
-    
-    fig = plt.figure()
-    axes = fig.add_axes([0.2, 0.2, 0.6, 0.6])
-    typeStr = "subject_behavior"
-    runner.plot_learning_curves(axes, type = typeStr, window_size = 200)
-    
-    plt.legend()
-    plt.show()
-    plt.savefig(fileRoot + "_" + typeStr + ".svg");
-    
+        fig = plt.figure()
+        axes = fig.add_axes([0.2, 0.2, 0.6, 0.6])
+        typeStr = "free_behavior"
+        runner.plot_learning_curves(axes, type = typeStr, window_size = 200)
+       
+        plt.legend()
+        plt.show()
+        plt.savefig(fileRoot + "_" + typeStr + ".svg");
+       
+            
+        fig = plt.figure()
+        axes = fig.add_axes([0.2, 0.2, 0.6, 0.6])
+        typeStr = "subject_probs"
+        runner.plot_learning_curves(axes, type = typeStr, window_size = 200)
         
-    fig = plt.figure()
-    axes = fig.add_axes([0.2, 0.2, 0.6, 0.6])
-    typeStr = "free_behavior"
-    runner.plot_learning_curves(axes, type = typeStr, window_size = 200)
-   
-    plt.legend()
-    plt.show()
-    plt.savefig(fileRoot + "_" + typeStr + ".svg");
-   
-        
-    fig = plt.figure()
-    axes = fig.add_axes([0.2, 0.2, 0.6, 0.6])
-    typeStr = "subject_probs"
-    runner.plot_learning_curves(axes, type = typeStr, window_size = 200)
+        plt.legend()
+        plt.show()
+        plt.savefig(fileRoot + "_" + typeStr + ".svg");
+       
     
-    plt.legend()
-    plt.show()
-    plt.savefig(fileRoot + "_" + typeStr + ".svg");
+            # if type == 'free_behavior':
+            # elif type == 'subject_probs':
+            # elif type == 'subject_behavior':
+    
+                
+        # sys.exit("Finished script")
+    
+    
+    
+        # runner.fit(2000, mp=True)
+        # with open(os.path.join('models', 'train_class_lrs_class_init.pkl'), 'wb') as f:
+        #     pickle.dump(runner, f)
+        del runner
+    
+        probe_dataset_paths = ['data_files/fixed_jeevesprobe_2afc_og.csv', 'data_files/fixed_woosterprobe_2afc_og.csv',
+                               'data_files/fixed_jeevesprobe_4afc_og.csv', 'data_files/fixed_woosterprobe_4afc_og.csv',
+                               'data_files/fixed_jocamoprobe_4afc_og.csv']
+        
+        model_paths = ['models/fixed_jeevesprobe_2afc_og/Asnapshot_final_390.pkl', 'models/fixed_woosterprobe_2afc_og/Asnapshot_final_540.pkl',
+                               'models/fixed_jeevesprobe_4afc_og/Asnapshot_final_1999.pkl', 'models/fixed_woosterprobe_4afc_og/Asnapshot_final_1999.pkl',
+                               'models/fixed_jocamoprobe_4afc_og/Asnapshot_final_1999.pkl']
+        
+        model_names = ['Asnapshot_final_390.pkl', 'Asnapshot_final_540.pkl',
+                               'Asnapshot_final_1999.pkl', 'Asnapshot_final_1999.pkl',
+                               'Asnapshot_final_1999.pkl']
+    
+    
+    
+        trials_to_load = [40000, 40000, 130000, 130000, 130000]
+        datasets = [MTurk1BehaviorData(dset, os.path.basename(dset.split('.cs')[0]), trials_to_load=trials_to_load[i], dev='cpu') for
+                    i, dset in enumerate(probe_dataset_paths)]
+        save_dirs = [os.path.join('models', dset.name) for dset in datasets]
+        
+        fileRoot = os.path.basename(probe_dataset_paths[idx].split('.cs')[0])
+    
+        model_path = [model_paths[idx]]
+        model_name = [model_names[idx]]
+        save_dir = [save_dirs[idx]]
+        dataset = [datasets[idx]]
+        
+      
+        for sd in save_dir:
+            if not os.path.exists(sd):
+                os.mkdir(sd)
+        # runner = ExperimentManager("probe", datasets, save_dirs, unique_lrs=False, unique_init=False, phase="probe", dev='cpu')
+        # runner = ExperimentManager("probe", datasets, save_dirs, unique_lrs=False, unique_init=False, phase="probe", dev='cpu')
+        runner = ExperimentManager.from_trained("probe", dataset, model_path, unique_lrs=False, unique_init=False, phase="probe", dev='cpu')
+        
+        
+        runner.save_dirs = save_dir
+        runner.load(model_name)
+        runner.get_subject_accuracy()
+        print("got subject accuracy")
+        runner.get_model_accuracy()
+        print("got model accuracy")
+        runner.get_subject_choice_probs()
+        print("got subject choice probs")
+        
+        
+        
+        
+        fig = plt.figure()
+        axes = fig.add_axes([0.2, 0.2, 0.6, 0.6])
+        typeStr = "subject_behavior"
+        runner.plot_learning_curves(axes, type = typeStr, window_size = 200)
+        
+        plt.legend()
+        plt.show()
+        plt.savefig(fileRoot + "_" + typeStr + ".svg");
+        
+            
+        fig = plt.figure()
+        axes = fig.add_axes([0.2, 0.2, 0.6, 0.6])
+        typeStr = "free_behavior"
+        runner.plot_learning_curves(axes, type = typeStr, window_size = 200)
+       
+        plt.legend()
+        plt.show()
+        plt.savefig(fileRoot + "_" + typeStr + ".svg");
+       
+            
+        fig = plt.figure()
+        axes = fig.add_axes([0.2, 0.2, 0.6, 0.6])
+        typeStr = "subject_probs"
+        runner.plot_learning_curves(axes, type = typeStr, window_size = 200)
+        
+        plt.legend()
+        plt.show()
+        plt.savefig(fileRoot + "_" + typeStr + ".svg");
    
 
     
