@@ -416,6 +416,10 @@ if __name__ == '__main__':
         plt.legend()
         plt.show()
         plt.savefig(fileRoot + "_" + typeStr + ".svg");
+<<<<<<< Updated upstream
+=======
+        plt.close(fig)
+>>>>>>> Stashed changes
         
             
         fig = plt.figure()
@@ -426,6 +430,10 @@ if __name__ == '__main__':
         plt.legend()
         plt.show()
         plt.savefig(fileRoot + "_" + typeStr + ".svg");
+<<<<<<< Updated upstream
+=======
+        plt.close(fig)
+>>>>>>> Stashed changes
        
             
         fig = plt.figure()
@@ -436,6 +444,10 @@ if __name__ == '__main__':
         plt.legend()
         plt.show()
         plt.savefig(fileRoot + "_" + typeStr + ".svg");
+<<<<<<< Updated upstream
+=======
+        plt.close(fig)
+>>>>>>> Stashed changes
        
     
             # if type == 'free_behavior':
@@ -507,6 +519,10 @@ if __name__ == '__main__':
         plt.legend()
         plt.show()
         plt.savefig(fileRoot + "_" + typeStr + ".svg");
+<<<<<<< Updated upstream
+=======
+        plt.close(fig)
+>>>>>>> Stashed changes
         
             
         fig = plt.figure()
@@ -517,7 +533,12 @@ if __name__ == '__main__':
         plt.legend()
         plt.show()
         plt.savefig(fileRoot + "_" + typeStr + ".svg");
+<<<<<<< Updated upstream
        
+=======
+        plt.close(fig)
+      
+>>>>>>> Stashed changes
             
         fig = plt.figure()
         axes = fig.add_axes([0.2, 0.2, 0.6, 0.6])
@@ -527,7 +548,12 @@ if __name__ == '__main__':
         plt.legend()
         plt.show()
         plt.savefig(fileRoot + "_" + typeStr + ".svg");
+<<<<<<< Updated upstream
    
+=======
+        plt.close(fig)
+       
+>>>>>>> Stashed changes
 
     
     sys.exit("Finished script - Figures saved")

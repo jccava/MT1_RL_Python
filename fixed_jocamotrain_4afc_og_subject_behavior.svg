@@ -6,7 +6,11 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+<<<<<<< Updated upstream
     <dc:date>2023-08-08T16:12:02.941045</dc:date>
+=======
+    <dc:date>2023-08-11T15:36:33.922725</dc:date>
+>>>>>>> Stashed changes
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -41,12 +45,20 @@ z
     <g id="xtick_1">
      <g id="line2d_1">
       <defs>
+<<<<<<< Updated upstream
        <path id="m1222012c73" d="M 0 0 
+=======
+       <path id="m6c36ff3611" d="M 0 0 
+>>>>>>> Stashed changes
 L 0 3.5 
 " style="stroke: #000000; stroke-width: 0.8"/>
       </defs>
       <g>
+<<<<<<< Updated upstream
        <use xlink:href="#m1222012c73" x="104.727273" y="276.48" style="stroke: #000000; stroke-width: 0.8"/>
+=======
+       <use xlink:href="#m6c36ff3611" x="104.727273" y="276.48" style="stroke: #000000; stroke-width: 0.8"/>
+>>>>>>> Stashed changes
       </g>
      </g>
      <g id="text_1">
@@ -82,7 +94,11 @@ z
     <g id="xtick_2">
      <g id="line2d_2">
       <g>
+<<<<<<< Updated upstream
        <use xlink:href="#m1222012c73" x="154.997369" y="276.48" style="stroke: #000000; stroke-width: 0.8"/>
+=======
+       <use xlink:href="#m6c36ff3611" x="154.997369" y="276.48" style="stroke: #000000; stroke-width: 0.8"/>
+>>>>>>> Stashed changes
       </g>
      </g>
      <g id="text_2">
@@ -115,7 +131,11 @@ z
     <g id="xtick_3">
      <g id="line2d_3">
       <g>
+<<<<<<< Updated upstream
        <use xlink:href="#m1222012c73" x="205.267465" y="276.48" style="stroke: #000000; stroke-width: 0.8"/>
+=======
+       <use xlink:href="#m6c36ff3611" x="205.267465" y="276.48" style="stroke: #000000; stroke-width: 0.8"/>
+>>>>>>> Stashed changes
       </g>
      </g>
      <g id="text_3">
@@ -158,7 +178,11 @@ z
     <g id="xtick_4">
      <g id="line2d_4">
       <g>
+<<<<<<< Updated upstream
        <use xlink:href="#m1222012c73" x="255.537562" y="276.48" style="stroke: #000000; stroke-width: 0.8"/>
+=======
+       <use xlink:href="#m6c36ff3611" x="255.537562" y="276.48" style="stroke: #000000; stroke-width: 0.8"/>
+>>>>>>> Stashed changes
       </g>
      </g>
      <g id="text_4">
@@ -209,7 +233,11 @@ z
     <g id="xtick_5">
      <g id="line2d_5">
       <g>
+<<<<<<< Updated upstream
        <use xlink:href="#m1222012c73" x="305.807658" y="276.48" style="stroke: #000000; stroke-width: 0.8"/>
+=======
+       <use xlink:href="#m6c36ff3611" x="305.807658" y="276.48" style="stroke: #000000; stroke-width: 0.8"/>
+>>>>>>> Stashed changes
       </g>
      </g>
      <g id="text_5">
@@ -247,7 +275,11 @@ z
     <g id="xtick_6">
      <g id="line2d_6">
       <g>
+<<<<<<< Updated upstream
        <use xlink:href="#m1222012c73" x="356.077754" y="276.48" style="stroke: #000000; stroke-width: 0.8"/>
+=======
+       <use xlink:href="#m6c36ff3611" x="356.077754" y="276.48" style="stroke: #000000; stroke-width: 0.8"/>
+>>>>>>> Stashed changes
       </g>
      </g>
      <g id="text_6">
@@ -293,12 +325,20 @@ z
     <g id="ytick_1">
      <g id="line2d_7">
       <defs>
+<<<<<<< Updated upstream
        <path id="mc43f97597b" d="M 0 0 
+=======
+       <path id="m4c82130ce3" d="M 0 0 
+>>>>>>> Stashed changes
 L -3.5 0 
 " style="stroke: #000000; stroke-width: 0.8"/>
       </defs>
       <g>
+<<<<<<< Updated upstream
        <use xlink:href="#mc43f97597b" x="92.16" y="274.088467" style="stroke: #000000; stroke-width: 0.8"/>
+=======
+       <use xlink:href="#m4c82130ce3" x="92.16" y="274.088467" style="stroke: #000000; stroke-width: 0.8"/>
+>>>>>>> Stashed changes
       </g>
      </g>
      <g id="text_7">
@@ -322,7 +362,11 @@ z
     <g id="ytick_2">
      <g id="line2d_8">
       <g>
+<<<<<<< Updated upstream
        <use xlink:href="#mc43f97597b" x="92.16" y="245.952782" style="stroke: #000000; stroke-width: 0.8"/>
+=======
+       <use xlink:href="#m4c82130ce3" x="92.16" y="245.952782" style="stroke: #000000; stroke-width: 0.8"/>
+>>>>>>> Stashed changes
       </g>
      </g>
      <g id="text_8">
@@ -337,7 +381,11 @@ z
     <g id="ytick_3">
      <g id="line2d_9">
       <g>
+<<<<<<< Updated upstream
        <use xlink:href="#mc43f97597b" x="92.16" y="217.817096" style="stroke: #000000; stroke-width: 0.8"/>
+=======
+       <use xlink:href="#m4c82130ce3" x="92.16" y="217.817096" style="stroke: #000000; stroke-width: 0.8"/>
+>>>>>>> Stashed changes
       </g>
      </g>
      <g id="text_9">
@@ -352,7 +400,11 @@ z
     <g id="ytick_4">
      <g id="line2d_10">
       <g>
+<<<<<<< Updated upstream
        <use xlink:href="#mc43f97597b" x="92.16" y="189.681411" style="stroke: #000000; stroke-width: 0.8"/>
+=======
+       <use xlink:href="#m4c82130ce3" x="92.16" y="189.681411" style="stroke: #000000; stroke-width: 0.8"/>
+>>>>>>> Stashed changes
       </g>
      </g>
      <g id="text_10">
@@ -399,7 +451,11 @@ z
     <g id="ytick_5">
      <g id="line2d_11">
       <g>
+<<<<<<< Updated upstream
        <use xlink:href="#mc43f97597b" x="92.16" y="161.545726" style="stroke: #000000; stroke-width: 0.8"/>
+=======
+       <use xlink:href="#m4c82130ce3" x="92.16" y="161.545726" style="stroke: #000000; stroke-width: 0.8"/>
+>>>>>>> Stashed changes
       </g>
      </g>
      <g id="text_11">
@@ -426,7 +482,11 @@ z
     <g id="ytick_6">
      <g id="line2d_12">
       <g>
+<<<<<<< Updated upstream
        <use xlink:href="#mc43f97597b" x="92.16" y="133.410041" style="stroke: #000000; stroke-width: 0.8"/>
+=======
+       <use xlink:href="#m4c82130ce3" x="92.16" y="133.410041" style="stroke: #000000; stroke-width: 0.8"/>
+>>>>>>> Stashed changes
       </g>
      </g>
      <g id="text_12">
@@ -482,7 +542,11 @@ z
     <g id="ytick_7">
      <g id="line2d_13">
       <g>
+<<<<<<< Updated upstream
        <use xlink:href="#mc43f97597b" x="92.16" y="105.274355" style="stroke: #000000; stroke-width: 0.8"/>
+=======
+       <use xlink:href="#m4c82130ce3" x="92.16" y="105.274355" style="stroke: #000000; stroke-width: 0.8"/>
+>>>>>>> Stashed changes
       </g>
      </g>
      <g id="text_13">
@@ -529,7 +593,11 @@ z
     <g id="ytick_8">
      <g id="line2d_14">
       <g>
+<<<<<<< Updated upstream
        <use xlink:href="#mc43f97597b" x="92.16" y="77.13867" style="stroke: #000000; stroke-width: 0.8"/>
+=======
+       <use xlink:href="#m4c82130ce3" x="92.16" y="77.13867" style="stroke: #000000; stroke-width: 0.8"/>
+>>>>>>> Stashed changes
       </g>
      </g>
      <g id="text_14">
@@ -5178,7 +5246,11 @@ L 356.052619 101.054003
 L 356.062673 101.054003 
 L 356.072727 99.647218 
 L 356.072727 99.647218 
+<<<<<<< Updated upstream
 " clip-path="url(#p78e1a423d8)" style="fill: none; stroke: #1f77b4; stroke-width: 1.5; stroke-linecap: square"/>
+=======
+" clip-path="url(#p805c704efa)" style="fill: none; stroke: #1f77b4; stroke-width: 1.5; stroke-linecap: square"/>
+>>>>>>> Stashed changes
    </g>
    <g id="line2d_16">
     <path d="M 104.727273 257.207056 
@@ -5543,7 +5615,11 @@ L 121.437053 143.257531
 L 121.44208 143.257531 
 L 121.547647 144.664315 
 L 121.547647 144.664315 
+<<<<<<< Updated upstream
 " clip-path="url(#p78e1a423d8)" style="fill: none; stroke: #ff7f0e; stroke-width: 1.5; stroke-linecap: square"/>
+=======
+" clip-path="url(#p805c704efa)" style="fill: none; stroke: #ff7f0e; stroke-width: 1.5; stroke-linecap: square"/>
+>>>>>>> Stashed changes
    </g>
    <g id="line2d_17">
     <path d="M 104.727273 226.257802 
@@ -5906,7 +5982,11 @@ L 121.517485 119.342198
 L 121.562728 120.748982 
 L 121.577809 120.748982 
 L 121.577809 120.748982 
+<<<<<<< Updated upstream
 " clip-path="url(#p78e1a423d8)" style="fill: none; stroke: #2ca02c; stroke-width: 1.5; stroke-linecap: square"/>
+=======
+" clip-path="url(#p805c704efa)" style="fill: none; stroke: #2ca02c; stroke-width: 1.5; stroke-linecap: square"/>
+>>>>>>> Stashed changes
    </g>
    <g id="line2d_18">
     <path d="M 104.727273 220.630665 
@@ -6269,7 +6349,11 @@ L 121.939754 127.782904
 L 121.944781 127.782904 
 L 121.990024 130.596472 
 L 122.015159 127.782904 
+<<<<<<< Updated upstream
 " clip-path="url(#p78e1a423d8)" style="fill: none; stroke: #d62728; stroke-width: 1.5; stroke-linecap: square"/>
+=======
+" clip-path="url(#p805c704efa)" style="fill: none; stroke: #d62728; stroke-width: 1.5; stroke-linecap: square"/>
+>>>>>>> Stashed changes
    </g>
    <g id="line2d_19">
     <path d="M 104.727273 254.393487 
@@ -11323,7 +11407,11 @@ L 355.926944 108.087924
 L 355.936998 108.087924 
 L 356.072727 101.054003 
 L 356.072727 101.054003 
+<<<<<<< Updated upstream
 " clip-path="url(#p78e1a423d8)" style="fill: none; stroke: #9467bd; stroke-width: 1.5; stroke-linecap: square"/>
+=======
+" clip-path="url(#p805c704efa)" style="fill: none; stroke: #9467bd; stroke-width: 1.5; stroke-linecap: square"/>
+>>>>>>> Stashed changes
    </g>
    <g id="line2d_20">
     <path d="M 104.727273 240.325645 
@@ -11701,7 +11789,11 @@ L 121.562728 161.545726
 L 121.607971 164.359294 
 L 121.733646 171.393216 
 L 121.733646 171.393216 
+<<<<<<< Updated upstream
 " clip-path="url(#p78e1a423d8)" style="fill: none; stroke: #8c564b; stroke-width: 1.5; stroke-linecap: square"/>
+=======
+" clip-path="url(#p805c704efa)" style="fill: none; stroke: #8c564b; stroke-width: 1.5; stroke-linecap: square"/>
+>>>>>>> Stashed changes
    </g>
    <g id="line2d_21">
     <path d="M 104.727273 88.392944 
@@ -11913,7 +12005,11 @@ L 121.69343 81.359023
 L 121.819105 85.579376 
 L 121.959862 85.579376 
 L 121.959862 85.579376 
+<<<<<<< Updated upstream
 " clip-path="url(#p78e1a423d8)" style="fill: none; stroke: #e377c2; stroke-width: 1.5; stroke-linecap: square"/>
+=======
+" clip-path="url(#p805c704efa)" style="fill: none; stroke: #e377c2; stroke-width: 1.5; stroke-linecap: square"/>
+>>>>>>> Stashed changes
    </g>
    <g id="patch_3">
     <path d="M 92.16 276.48 
@@ -12706,7 +12802,11 @@ L 168.311875 261.622187
   </g>
  </g>
  <defs>
+<<<<<<< Updated upstream
   <clipPath id="p78e1a423d8">
+=======
+  <clipPath id="p805c704efa">
+>>>>>>> Stashed changes
    <rect x="92.16" y="69.12" width="276.48" height="207.36"/>
   </clipPath>
  </defs>
