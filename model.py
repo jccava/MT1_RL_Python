@@ -25,21 +25,26 @@ class MT1QL:
                                                           device=self.device))
             self.in_q_init = None
         else:
-            self.q_init = torch.nn.Parameter(torch.normal(size=(num_trial_types,), mean=0, std=.05, device=self.device))
-            self.in_q_init = torch.nn.Parameter(torch.normal(size=(num_trial_types,), mean=0, std=.05, device=self.device))
+            self.q_init = torch.nn.Parameter(torch.normal(
+                size=(num_trial_types,), mean=0, std=.05, device=self.device))
+            self.in_q_init = torch.nn.Parameter(torch.normal(
+                size=(num_trial_types,), mean=0, std=.05, device=self.device))
         if unique_lrs:
             self.lrs = torch.nn.Parameter(
                 torch.normal(size=(num_trial_types, num_cues), mean=-1., std=.05, device=self.device))
             self.temps = torch.nn.Parameter(
                 torch.normal(size=(num_trial_types, num_cues), mean=0, std=.05, device=self.device))
         else:
-            self.lrs = torch.nn.Parameter(torch.normal(size=(num_trial_types,), mean=-1, std=.05, device=self.device))
-            self.temps = torch.nn.Parameter(torch.normal(size=(num_trial_types,), mean=0, std=.05, device=self.device))
+            self.lrs = torch.nn.Parameter(torch.normal(
+                size=(num_trial_types,), mean=-1, std=.05, device=self.device))
+            self.temps = torch.nn.Parameter(torch.normal(
+                size=(num_trial_types,), mean=0, std=.05, device=self.device))
         self.unique_lrs = unique_lrs
         self.unique_initial = unique_initial
         self.softmax = torch.nn.Softmax()
         self.sigmoid = torch.nn.Sigmoid()
-        self.optim = torch.optim.Adam(lr=.01, params=[self.lrs] + [self.temps] + [self.q_init])
+        self.optim = torch.optim.Adam(
+            lr=.01, params=[self.lrs] + [self.temps] + [self.q_init])
         self.save_dir = save_dir
 
     def to(self, device):
@@ -59,15 +64,18 @@ class MT1QL:
             Q = torch.sigmoid(Q).clone()
         else:
             # a single initial value for the correct diagonal on each trial type.
-            Q = torch.zeros((self.trial_types, self.num_cues, self.num_targets), device=self.device)
+            Q = torch.zeros((self.trial_types, self.num_cues,
+                            self.num_targets), device=self.device)
             correct_vals = self.q_init.clone()
             correct_vals = torch.sigmoid(correct_vals).clone()
             incorrect_vals = self.in_q_init.clone()
-            incorrect_vals = torch.sigmoid(incorrect_vals).clone().reshape((-1, 1, 1))
+            incorrect_vals = torch.sigmoid(
+                incorrect_vals).clone().reshape((-1, 1, 1))
             Q = Q + incorrect_vals
             correct_ind = torch.tile(torch.eye(self.num_cues, self.num_targets, device=self.device, dtype=bool),
                                      (self.trial_types, 1, 1))
-            Q[correct_ind] = torch.tile(correct_vals[:, None], (1, min(self.num_cues, self.num_targets))).flatten()
+            Q[correct_ind] = torch.tile(
+                correct_vals[:, None], (1, min(self.num_cues, self.num_targets))).flatten()
         return Q
 
     def learn_loop(self, trial_data, batch=True, combine_likelihoods=True, sameple_q=None):
@@ -84,25 +92,35 @@ class MT1QL:
             iter = trial_data.__iter__
         for trial_batch in iter():
             if self.unique_lrs:
-                lr = torch.sigmoid(self.lrs[trial_batch['trial_type'], trial_batch['cue_idx']]).clone()  # size batch
-                temp = torch.sigmoid(self.temps[trial_batch['trial_type'], trial_batch['cue_idx']]).clone()
+                lr = torch.sigmoid(
+                    self.lrs[trial_batch['trial_type'], trial_batch['cue_idx']]).clone()  # size batch
+                temp = torch.sigmoid(
+                    self.temps[trial_batch['trial_type'], trial_batch['cue_idx']]).clone()
             else:
-                lr = torch.sigmoid(self.lrs[trial_batch['trial_type']]).clone() / 2
+                lr = torch.sigmoid(
+                    self.lrs[trial_batch['trial_type']]).clone() / 2
                 temp = torch.abs(self.temps[trial_batch['trial_type']]).clone()
-            option_exp = Q[trial_batch['trial_type'], trial_batch['cue_idx'], trial_batch['choice_options']].clone()
+            option_exp = Q[trial_batch['trial_type'],
+                           trial_batch['cue_idx'], trial_batch['choice_options']].clone()
             choice_probs = self.softmax(temp * option_exp)
-            is_choice = torch.eq(trial_batch['choice_made'], trial_batch['choice_options'])
+            is_choice = torch.eq(
+                trial_batch['choice_made'], trial_batch['choice_options'])
             c_prob = choice_probs[is_choice].clone()
             likelihood = torch.sum(c_prob)
             if combine_likelihoods:
                 likelihoods = likelihoods + likelihood
             else:
-                likelihoods[trial_batch['trial_type']].append(likelihood.detach().cpu().item())
-            reward = torch.eq(trial_batch['correct_option'], trial_batch['choice_made']).float()
-            current_value = Q[trial_batch['trial_type'], trial_batch['cue_idx'], trial_batch['choice_made']].clone()
-            Q[trial_batch['trial_type'], trial_batch['cue_idx'], trial_batch['choice_made']] = current_value + lr * (reward - current_value)
+                likelihoods[trial_batch['trial_type']].append(
+                    likelihood.detach().cpu().item())
+            reward = torch.eq(
+                trial_batch['correct_option'], trial_batch['choice_made']).float()
+            current_value = Q[trial_batch['trial_type'],
+                              trial_batch['cue_idx'], trial_batch['choice_made']].clone()
+            Q[trial_batch['trial_type'], trial_batch['cue_idx'],
+                trial_batch['choice_made']] = current_value + lr * (reward - current_value)
             if sameple_q is not None and (count % sameple_q) == 0:
-                q_sample.append(Q.cpu().detach().numpy().reshape((-1, self.num_cues, self.num_targets)))
+                q_sample.append(Q.cpu().detach().numpy().reshape(
+                    (-1, self.num_cues, self.num_targets)))
             count += 1
         if sameple_q is not None:
             return likelihoods, q_sample
@@ -115,18 +133,23 @@ class MT1QL:
         rewarded = [list() for _ in range(self.trial_types)]
         iter = trial_data.__iter__
         for trial_batch in iter():
-            lr = torch.sigmoid(self.lrs[trial_batch['trial_type']]).clone() / 2  # size batch
+            lr = torch.sigmoid(
+                self.lrs[trial_batch['trial_type']]).clone() / 2  # size batch
             temp = torch.abs(self.temps[trial_batch['trial_type']]).clone()
-            option_exp = Q[trial_batch['trial_type'], trial_batch['cue_idx'], trial_batch['choice_options']].clone()
+            option_exp = Q[trial_batch['trial_type'],
+                           trial_batch['cue_idx'], trial_batch['choice_options']].clone()
             choice_probs = self.softmax(temp * option_exp)
             np_probs = choice_probs.detach().cpu().numpy().squeeze()
             is_choice = np.random.choice(np.arange(len(np_probs)), p=np_probs)
             choice_made = trial_batch['choice_options'][:, is_choice]
-            reward = torch.eq(trial_batch['correct_option'], choice_made).float()
-            rewarded[trial_batch['trial_type']].append(reward.detach().cpu().item())
-            current_value = Q[trial_batch['trial_type'], trial_batch['cue_idx'], choice_made].clone()
+            reward = torch.eq(
+                trial_batch['correct_option'], choice_made).float()
+            rewarded[trial_batch['trial_type']].append(
+                reward.detach().cpu().item())
+            current_value = Q[trial_batch['trial_type'],
+                              trial_batch['cue_idx'], choice_made].clone()
             Q[trial_batch['trial_type'], trial_batch['cue_idx'], choice_made] = current_value + lr * (
-                    reward - current_value)
+                reward - current_value)
             if sample_q is not None and (count % sample_q) == 0:
                 q_sample.append(Q.cpu().detach().numpy().reshape((-1, 14, 14)))
             count += 1
@@ -140,7 +163,8 @@ class MT1QL:
         """
         with torch.no_grad():
             if real_behavior:
-                res = self.learn_loop(trial_data, batch=False, combine_likelihoods=False, sameple_q=100)
+                res = self.learn_loop(
+                    trial_data, batch=False, combine_likelihoods=False, sameple_q=100)
             else:
                 res = self.free_behavior(trial_data, sample_q=100)
         return res
@@ -184,6 +208,11 @@ class MT1QL:
 if __name__ == '__main__':
     from dataloader import MTurk1BehaviorData
     import sys
+
+    # from numba.core.errors import NumbaDeprecationWarning, NumbaPendingDeprecationWarning
+    # import warnings
+    # warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
+    # warnings.simplefilter('ignore', category=NumbaPendingDeprecationWarning)
 
     jeeves_probe_no_high_gauss_data = MTurk1BehaviorData(sys.argv[1])
     jeeves_probe = MT1QL(num_cues=jeeves_probe_no_high_gauss_data.num_cues,

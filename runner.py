@@ -4,7 +4,7 @@ from typing import List
 
 import matplotlib.pyplot as plt
 import pandas as pd
-#import torch
+# import torch
 import numpy as np
 from model import MT1QL
 from dataloader import MTurk1BehaviorData
@@ -12,6 +12,7 @@ from dataloader import MTurk1BehaviorData
 from torch.multiprocessing import Pool, set_start_method
 # import scipy
 from scipy.ndimage import uniform_filter
+from scipy.io import savemat
 # from scipy.spatial.distance import cdist
 from sklearn.metrics import confusion_matrix
 from graspologic.embed import AdjacencySpectralEmbed
@@ -61,9 +62,9 @@ train_data_map = {
     "achromatic_shape_to_shape": {"task": (3,),
                                   "cues_min_max": (0, 14)},
     "color_to_color_low": {"task": (4,),
-                       "cues_min_max": (0, 14)},
+                           "cues_min_max": (0, 14)},
     "color_to_color_high": {"task": (5,),
-                           "cues_min_max": (0, 14)}
+                            "cues_min_max": (0, 14)}
 }
 
 
@@ -83,7 +84,8 @@ class ExperimentManager:
 
     @classmethod
     def from_trained(cls, name, datasets, model_paths, phase, unique_lrs=False, unique_init=False, dev='cpu'):
-        exp = cls(name, [], [], phase, unique_lrs=unique_lrs, unique_init=unique_init, dev=dev)
+        exp = cls(name, [], [], phase, unique_lrs=unique_lrs,
+                  unique_init=unique_init, dev=dev)
         exp.datasets = datasets
         exp.color_dist = exp.compute_color_distributions()
         for mp in model_paths:
@@ -128,7 +130,8 @@ class ExperimentManager:
         for s, dataset in enumerate(self.datasets):
             color_dist.append({})
             stds = [10, 40]
-            means = [0, 0, 60, 60, 120, 120, 180, 180, 240, 240, 300, 300, None, None]
+            means = [0, 0, 60, 60, 120, 120, 180,
+                     180, 240, 240, 300, 300, None, None]
             for std in stds:
                 for idx, color in enumerate(color_names):
                     if color not in color_dist[s]:
@@ -142,7 +145,8 @@ class ExperimentManager:
             _set_mp_env()
         except Exception:
             pass
-        args = list(zip(self.models, self.datasets, [epochs] * len(self.models)))
+        args = list(zip(self.models, self.datasets,
+                    [epochs] * len(self.models)))
         if mp:
             with Pool() as p:
                 res = p.starmap(_fit_wrapper, args)
@@ -159,7 +163,8 @@ class ExperimentManager:
                 task_data = data.loc[data['Task type'] == idx]
                 correct = task_data['object correct'].to_numpy()
                 selected = task_data['object selected'].to_numpy()
-                self.subject_real_accuracy[i].append((correct == selected).astype(float))
+                self.subject_real_accuracy[i].append(
+                    (correct == selected).astype(float))
 
     def get_subject_choice_probs(self, overwrite=False, mp=True):
         if self.subject_choice_probs is None or overwrite:
@@ -167,7 +172,8 @@ class ExperimentManager:
                 _set_mp_env()
             except Exception:
                 pass
-            args = [(self.models[idx], dataset) for idx, dataset in enumerate(self.datasets)]
+            args = [(self.models[idx], dataset)
+                    for idx, dataset in enumerate(self.datasets)]
             if mp:
                 with Pool() as p:
                     res = p.starmap(_predict_wrapper, args)
@@ -175,7 +181,8 @@ class ExperimentManager:
                 res = []
                 for arg in args:
                     res.append(_predict_wrapper(*arg))
-            self.subject_choice_probs, self.subject_Q_estimates = list(zip(*res))
+            self.subject_choice_probs, self.subject_Q_estimates = list(
+                zip(*res))
 
     def get_model_accuracy(self, overwrite=False):
         if self.model_free_accuracy is None or overwrite:
@@ -183,7 +190,8 @@ class ExperimentManager:
                 _set_mp_env()
             except Exception:
                 pass
-            args = [(self.models[idx], dataset, False) for idx, dataset in enumerate(self.datasets)]
+            args = [(self.models[idx], dataset, False)
+                    for idx, dataset in enumerate(self.datasets)]
             with Pool() as p:
                 res = p.starmap(_predict_wrapper, args)
             self.model_free_accuracy, _ = list(zip(*res))
@@ -215,11 +223,21 @@ class ExperimentManager:
             learn_curves = all_learn_curves[idx]
             ax = axs[i]
             ax.set_title(str(self.datasets[idx]))
+
+            currDataFrame = self.datasets[idx].data
+            currDataFrame.rename(columns=lambda x: 'col_' +
+                                 x.replace(' ', '_'), inplace=True)
+            savemat(str(
+                self.datasets[idx]) + '_data.mat', {'struct2': currDataFrame.to_dict("list")})
+
+            # scipy.io.savemat('EEGdata1.mat', {'struct1':truncDataFrame.to_dict("list")})
             for j, trial_type in enumerate(learn_curves):
                 np_trial = np.array(trial_type)
+
                 smoothed = uniform_filter(np_trial, window_size)
                 if i == (len(axs) - 1) and j < len(self.task_keys):
-                    ax.plot(smoothed[:min(trials_to_plot, len(smoothed))], label=self.task_keys[j])
+                    ax.plot(smoothed[:min(trials_to_plot, len(
+                        smoothed))], label=self.task_keys[j])
                 else:
                     ax.plot(smoothed[:min(trials_to_plot, len(smoothed))])
         return axs
@@ -231,7 +249,8 @@ class ExperimentManager:
         correct = task_data['object correct'].to_numpy()
         selected = task_data['object selected'].to_numpy()
 
-        conf = confusion_matrix(correct, selected, labels=list(range(0, num_items)))
+        conf = confusion_matrix(
+            correct, selected, labels=list(range(0, num_items)))
         if standardize:
             mod = (np.eye(num_items) * 5.5) + 1
             conf = conf / mod
@@ -245,7 +264,8 @@ class ExperimentManager:
             data_slice = dataset.data.iloc[trial_start:trial_stop]
             for task, task_name in enumerate(self.task_keys):
                 task_data = data_slice.loc[data_slice['Task type'] == task]
-                conf = self._get_confusion_matrix(task_data, standardize, error_only)
+                conf = self._get_confusion_matrix(
+                    task_data, standardize, error_only)
                 axs[task, s].imshow(conf)
                 axs[task, s].set_title(str(dataset) + ': ' + task_name)
         return axs
@@ -259,11 +279,13 @@ class ExperimentManager:
                     task_types = (0, 1, 2, 3)
                 else:
                     raise NotImplementedError
-            task_data = dataset.data.loc[dataset.data['Task type'].isin(task_types)]
+            task_data = dataset.data.loc[dataset.data['Task type'].isin(
+                task_types)]
             task_data = task_data.iloc[trial_start:trial_stop]
 
             if error_only:
-                task_data = task_data.loc[task_data["object correct"] != task_data["object selected"]]
+                task_data = task_data.loc[task_data["object correct"]
+                                          != task_data["object selected"]]
             for idx in range(28):
                 if idx in (12, 13, 26, 27):
                     # skip grey option
@@ -277,7 +299,8 @@ class ExperimentManager:
                         colors = selected["selected degree"].to_numpy()
 
                 c_data.append(colors)
-            axs[s].hist(c_data, bins=360, color=np.tile(color_vals, (2, 1)), stacked=True, alpha=1)
+            axs[s].hist(c_data, bins=360, color=np.tile(
+                color_vals, (2, 1)), stacked=True, alpha=1)
         return axs
 
     def load(self, handle: List[str]):
@@ -299,7 +322,8 @@ class ExperimentManager:
         else:
             raise NotImplementedError
         names = [dataset.name for dataset in self.datasets]
-        datasets = [dataset.data.iloc[trial_start:trial_stop] for dataset in self.datasets]
+        datasets = [dataset.data.iloc[trial_start:trial_stop]
+                    for dataset in self.datasets]
         if combine_subjects:
             datasets = [pd.concat(datasets)]
             names = ['all_subjects']
@@ -314,23 +338,28 @@ class ExperimentManager:
     def create_similarity_space(self, axs, trial_start, trial_stop, mode='color', embed_dim=2, combine_subjects=True,
                                 algorithm='mds', converge_tolerance=.001):
         all_embedded = []
-        datasets, names = self.extract_data(trial_start, trial_stop, mode, combine_subjects)
+        datasets, names = self.extract_data(
+            trial_start, trial_stop, mode, combine_subjects)
         for s, task_data in enumerate(datasets):
-            simmilarity = self._get_confusion_matrix(task_data, standardize=True, error_only=False)
+            simmilarity = self._get_confusion_matrix(
+                task_data, standardize=True, error_only=False)
             simmilarity = (simmilarity + simmilarity.T) / 2
             dissim = np.max(simmilarity) - simmilarity
-            error_vals = dissim[np.logical_not(np.eye(len(simmilarity), dtype=bool))]
+            error_vals = dissim[np.logical_not(
+                np.eye(len(simmilarity), dtype=bool))]
             dissim = (dissim - np.mean(error_vals)) / np.std(error_vals)
             dissim += 5
             dissim[np.eye(len(simmilarity), dtype=bool)] = 0
 
             if algorithm == 'svd':
-                reducer = AdjacencySpectralEmbed(n_components=embed_dim, algorithm='full')
+                reducer = AdjacencySpectralEmbed(
+                    n_components=embed_dim, algorithm='full')
             elif algorithm == 'mds':
                 reducer = MDScale(n=12, embed_dims=embed_dim, device='cpu')
             else:
                 raise ValueError
-            embed = reducer.fit_transform(dissim, max_iter=50000, tol=converge_tolerance)
+            embed = reducer.fit_transform(
+                dissim, max_iter=50000, tol=converge_tolerance)
             embed = [embed]
             embed = [np.array(e) for e in embed]
             right_rms = np.sqrt(np.sum(np.power(dissim, 2), axis=0))
@@ -341,7 +370,7 @@ class ExperimentManager:
             else:
                 ax = axs
             ax[0].set_title(names[s] + " Right Latent")
-            #ax[1].set_title(names[s] + " Left Latent")
+            # ax[1].set_title(names[s] + " Left Latent")
             maxes = []
             for i in range(len(embed)):
                 embed[i][:, 0] -= np.min(embed[i][:, 0])
@@ -351,142 +380,76 @@ class ExperimentManager:
                 maxes.append(np.max(embed[i]))
                 pad = maxes[i] * .1
                 ax[i].set_xlim(-pad, maxes[i] + pad)
-                #ax[i].set_ylim(-pad, maxes[i] + pad)
+                # ax[i].set_ylim(-pad, maxes[i] + pad)
             if embed_dim == 2:
-                ax[0].scatter(embed[0][:, 0], embed[0][:, 1], color=color_vals[:12, :], s=120)
-                #ax[1].scatter(embed[1][:, 0], embed[1][:, 1], color=color_vals[:12, :], s=120)
+                ax[0].scatter(embed[0][:, 0], embed[0][:, 1],
+                              color=color_vals[:12, :], s=120)
+                # ax[1].scatter(embed[1][:, 0], embed[1][:, 1], color=color_vals[:12, :], s=120)
             elif embed_dim == 3:
-                ax[0].scatter(embed[0][:, 0], embed[0][:, 1], embed[0][:, 2], color=color_vals[:12, :], s=120)
-                #ax[1].scatter(embed[1][:, 0], embed[1][:, 1], embed[1][:, 2], color=color_vals[:12, :], s=120)
+                ax[0].scatter(embed[0][:, 0], embed[0][:, 1],
+                              embed[0][:, 2], color=color_vals[:12, :], s=120)
+                # ax[1].scatter(embed[1][:, 0], embed[1][:, 1], embed[1][:, 2], color=color_vals[:12, :], s=120)
         return axs, all_embedded
 
 
 if __name__ == '__main__':
     import pickle
 
-    train_dataset_paths = ['data_files/fixed_jeevestrain_2afc_og.csv', 'data_files/fixed_woostertrain_2afc_og.csv',
-                           'data_files/fixed_jeevestrain_4afc_og.csv', 'data_files/fixed_woostertrain_4afc_og.csv',
+    # from numba.core.errors import NumbaDeprecationWarning, NumbaPendingDeprecationWarning
+    # import warnings
+
+    # warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
+    # warnings.simplefilter('ignore', category=NumbaPendingDeprecationWarning)
+
+    train_dataset_paths = ['data_files/fixed_jeevestrain_2afc_og.csv',
+                           'data_files/fixed_woostertrain_2afc_og.csv',
+                           'data_files/fixed_jeevestrain_4afc_og.csv',
+                           'data_files/fixed_woostertrain_4afc_og.csv',
                            'data_files/fixed_jocamotrain_4afc_og.csv']
-    model_paths = ['models/fixed_jeevestrain_2afc_og/Asnapshot_final_1290.pkl', 'models/fixed_woostertrain_2afc_og/Asnapshot_final_1380.pkl',
-                           'models/fixed_jeevestrain_4afc_og/Asnapshot_final_1999.pkl', 'models/fixed_woostertrain_4afc_og/Asnapshot_final_1999.pkl',
-                           'models/fixed_jocamotrain_4afc_og/Asnapshot_final_1999.pkl']
-    model_names = ['Asnapshot_final_1290.pkl', 'Asnapshot_final_1380.pkl',
-                           'Asnapshot_final_1999.pkl', 'Asnapshot_final_1999.pkl',
-                           'Asnapshot_final_1999.pkl']
-    
-   
+
+    model_paths = ['models/fixed_jeevestrain_2afc_og/Asnapshot_final_1290.pkl',
+                   'models/fixed_woostertrain_2afc_og/Asnapshot_final_1380.pkl',
+                   'models/fixed_jeevestrain_4afc_og/Asnapshot_final_1999.pkl',
+                   'models/fixed_woostertrain_4afc_og/Asnapshot_final_1999.pkl',
+                   'models/fixed_jocamotrain_4afc_og/Asnapshot_final_1999.pkl']
+
+    model_names = ['Asnapshot_final_1290.pkl',
+                   'Asnapshot_final_1380.pkl',
+                   'Asnapshot_final_1999.pkl',
+                   'Asnapshot_final_1999.pkl',
+                   'Asnapshot_final_1999.pkl']
+
     trials_to_load = [30000, 30000, 60000, 60000, 75000]
 
     datasets = [MTurk1BehaviorData(dset, os.path.basename(dset.split('.cs')[0]), trials_to_load=trials_to_load[i], dev='cpu') for
                 i, dset in enumerate(train_dataset_paths)]
     save_dirs = [os.path.join('models', dset.name) for dset in datasets]
-    
+
     for idx in range(len(train_dataset_paths)):
-        
+
         # idx = 1
-        
+
         fileRoot = os.path.basename(train_dataset_paths[idx].split('.cs')[0])
-        
+
         model_path = [model_paths[idx]]
         model_name = [model_names[idx]]
         save_dir = [save_dirs[idx]]
         dataset = [datasets[idx]]
-        
+
         for sd in save_dir:
             if not os.path.exists(sd):
                 os.mkdir(sd)
         # runner = ExperimentManager("train", datasets, save_dirs, unique_lrs=False, unique_init=False, phase="train", dev='cpu')
-        runner = ExperimentManager.from_trained("train", dataset, model_path, unique_lrs=False, unique_init=False, phase="train", dev='cpu')
-        
-        runner.save_dirs = save_dir
-        runner.load(model_name)
-        runner.get_subject_accuracy()
-        print("got subject accuracy")
-        runner.get_model_accuracy()
-        print("got model accuracy")
-        runner.get_subject_choice_probs()
-        print("got subject choice probs")  
-        
-        
-        fig = plt.figure()
-        axes = fig.add_axes([0.2, 0.2, 0.6, 0.6])
-        typeStr = "subject_behavior"
-        runner.plot_learning_curves(axes, type = typeStr, window_size = 200)
-        
-        plt.legend()
-        plt.show()
-        plt.savefig(fileRoot + "_" + typeStr + ".svg");
-        
-            
-        fig = plt.figure()
-        axes = fig.add_axes([0.2, 0.2, 0.6, 0.6])
-        typeStr = "free_behavior"
-        runner.plot_learning_curves(axes, type = typeStr, window_size = 200)
-       
-        plt.legend()
-        plt.show()
-        plt.savefig(fileRoot + "_" + typeStr + ".svg");
-       
-            
-        fig = plt.figure()
-        axes = fig.add_axes([0.2, 0.2, 0.6, 0.6])
-        typeStr = "subject_probs"
-        runner.plot_learning_curves(axes, type = typeStr, window_size = 200)
-        
-        plt.legend()
-        plt.show()
-        plt.savefig(fileRoot + "_" + typeStr + ".svg");
-       
-    
-            # if type == 'free_behavior':
-            # elif type == 'subject_probs':
-            # elif type == 'subject_behavior':
-    
-                
-        # sys.exit("Finished script")
-    
-    
-    
-        # runner.fit(2000, mp=True)
-        # with open(os.path.join('models', 'train_class_lrs_class_init.pkl'), 'wb') as f:
-        #     pickle.dump(runner, f)
-        del runner
-    
-        probe_dataset_paths = ['data_files/fixed_jeevesprobe_2afc_og.csv', 'data_files/fixed_woosterprobe_2afc_og.csv',
-                               'data_files/fixed_jeevesprobe_4afc_og.csv', 'data_files/fixed_woosterprobe_4afc_og.csv',
-                               'data_files/fixed_jocamoprobe_4afc_og.csv']
-        
-        model_paths = ['models/fixed_jeevesprobe_2afc_og/Asnapshot_final_390.pkl', 'models/fixed_woosterprobe_2afc_og/Asnapshot_final_540.pkl',
-                               'models/fixed_jeevesprobe_4afc_og/Asnapshot_final_1999.pkl', 'models/fixed_woosterprobe_4afc_og/Asnapshot_final_1999.pkl',
-                               'models/fixed_jocamoprobe_4afc_og/Asnapshot_final_1999.pkl']
-        
-        model_names = ['Asnapshot_final_390.pkl', 'Asnapshot_final_540.pkl',
-                               'Asnapshot_final_1999.pkl', 'Asnapshot_final_1999.pkl',
-                               'Asnapshot_final_1999.pkl']
-    
-    
-    
-        trials_to_load = [40000, 40000, 130000, 130000, 130000]
-        datasets = [MTurk1BehaviorData(dset, os.path.basename(dset.split('.cs')[0]), trials_to_load=trials_to_load[i], dev='cpu') for
-                    i, dset in enumerate(probe_dataset_paths)]
-        save_dirs = [os.path.join('models', dset.name) for dset in datasets]
-        
-        fileRoot = os.path.basename(probe_dataset_paths[idx].split('.cs')[0])
-    
-        model_path = [model_paths[idx]]
-        model_name = [model_names[idx]]
-        save_dir = [save_dirs[idx]]
-        dataset = [datasets[idx]]
-        
-      
-        for sd in save_dir:
-            if not os.path.exists(sd):
-                os.mkdir(sd)
-        # runner = ExperimentManager("probe", datasets, save_dirs, unique_lrs=False, unique_init=False, phase="probe", dev='cpu')
-        # runner = ExperimentManager("probe", datasets, save_dirs, unique_lrs=False, unique_init=False, phase="probe", dev='cpu')
-        runner = ExperimentManager.from_trained("probe", dataset, model_path, unique_lrs=False, unique_init=False, phase="probe", dev='cpu')
-        
-        
+        runner = ExperimentManager.from_trained(
+            "train", dataset, model_path, unique_lrs=False, unique_init=False, phase="train", dev='cpu')
+
+        # if type == 'free_behavior':
+        #     all_learn_curves = self.model_free_accuracy
+        # elif type == 'subject_probs':
+        #     all_learn_curves = self.subject_choice_probs
+        # elif type == 'subject_behavior':
+        #     all_learn_curves = self.subject_real_accuracy
+
         runner.save_dirs = save_dir
         runner.load(model_name)
         runner.get_subject_accuracy()
@@ -495,47 +458,130 @@ if __name__ == '__main__':
         print("got model accuracy")
         runner.get_subject_choice_probs()
         print("got subject choice probs")
-        
-        
-        
-        
+
         fig = plt.figure()
         axes = fig.add_axes([0.2, 0.2, 0.6, 0.6])
         typeStr = "subject_behavior"
-        runner.plot_learning_curves(axes, type = typeStr, window_size = 200)
-        
+        runner.plot_learning_curves(axes, type=typeStr, window_size=200)
+
         plt.legend()
+        fig.suptitle(typeStr)
         plt.show()
-        plt.savefig(fileRoot + "_" + typeStr + ".svg");
-        
-            
+        plt.savefig(fileRoot + "_" + typeStr + ".svg")
+
         fig = plt.figure()
         axes = fig.add_axes([0.2, 0.2, 0.6, 0.6])
         typeStr = "free_behavior"
-        runner.plot_learning_curves(axes, type = typeStr, window_size = 200)
-       
+        runner.plot_learning_curves(axes, type=typeStr, window_size=200)
+
         plt.legend()
+        fig.suptitle(typeStr)
         plt.show()
-        plt.savefig(fileRoot + "_" + typeStr + ".svg");
-       
-            
+        plt.savefig(fileRoot + "_" + typeStr + ".svg")
+
         fig = plt.figure()
         axes = fig.add_axes([0.2, 0.2, 0.6, 0.6])
         typeStr = "subject_probs"
-        runner.plot_learning_curves(axes, type = typeStr, window_size = 200)
-        
-        plt.legend()
-        plt.show()
-        plt.savefig(fileRoot + "_" + typeStr + ".svg");
-   
+        runner.plot_learning_curves(axes, type=typeStr, window_size=200)
 
-    
-    sys.exit("Finished script - Figures saved")
-   
+        plt.legend()
+        fig.suptitle(typeStr)
+        plt.show()
+        plt.savefig(fileRoot + "_" + typeStr + ".svg")
+
         # if type == 'free_behavior':
         # elif type == 'subject_probs':
         # elif type == 'subject_behavior':
 
+        # sys.exit("Finished script")
+
+        # runner.fit(2000, mp=True)
+        # with open(os.path.join('models', 'train_class_lrs_class_init.pkl'), 'wb') as f:
+        #     pickle.dump(runner, f)
+        del runner
+
+        probe_dataset_paths = ['data_files/fixed_jeevesprobe_2afc_og.csv',
+                               'data_files/fixed_woosterprobe_2afc_og.csv',
+                               'data_files/fixed_jeevesprobe_4afc_og.csv',
+                               'data_files/fixed_woosterprobe_4afc_og.csv',
+                               'data_files/fixed_jocamoprobe_4afc_og.csv']
+
+        model_paths = ['models/fixed_jeevesprobe_2afc_og/Asnapshot_final_390.pkl',
+                       'models/fixed_woosterprobe_2afc_og/Asnapshot_final_540.pkl',
+                       'models/fixed_jeevesprobe_4afc_og/Asnapshot_final_1999.pkl',
+                       'models/fixed_woosterprobe_4afc_og/Asnapshot_final_1999.pkl',
+                       'models/fixed_jocamoprobe_4afc_og/Asnapshot_final_1999.pkl']
+
+        model_names = ['Asnapshot_final_390.pkl',
+                       'Asnapshot_final_540.pkl',
+                       'Asnapshot_final_1999.pkl',
+                       'Asnapshot_final_1999.pkl',
+                       'Asnapshot_final_1999.pkl']
+
+        trials_to_load = [40000, 40000, 130000, 130000, 130000]
+        datasets = [MTurk1BehaviorData(dset, os.path.basename(dset.split('.cs')[0]), trials_to_load=trials_to_load[i], dev='cpu') for
+                    i, dset in enumerate(probe_dataset_paths)]
+        save_dirs = [os.path.join('models', dset.name) for dset in datasets]
+
+        fileRoot = os.path.basename(probe_dataset_paths[idx].split('.cs')[0])
+
+        model_path = [model_paths[idx]]
+        model_name = [model_names[idx]]
+        save_dir = [save_dirs[idx]]
+        dataset = [datasets[idx]]
+
+        for sd in save_dir:
+            if not os.path.exists(sd):
+                os.mkdir(sd)
+        # runner = ExperimentManager("probe", datasets, save_dirs, unique_lrs=False, unique_init=False, phase="probe", dev='cpu')
+        # runner = ExperimentManager("probe", datasets, save_dirs, unique_lrs=False, unique_init=False, phase="probe", dev='cpu')
+        runner = ExperimentManager.from_trained(
+            "probe", dataset, model_path, unique_lrs=False, unique_init=False, phase="probe", dev='cpu')
+
+        runner.save_dirs = save_dir
+        runner.load(model_name)
+        runner.get_subject_accuracy()
+        print("got subject accuracy")
+        runner.get_model_accuracy()
+        print("got model accuracy")
+        runner.get_subject_choice_probs()
+        print("got subject choice probs")
+
+        fig = plt.figure()
+        axes = fig.add_axes([0.2, 0.2, 0.6, 0.6])
+        typeStr = "subject_behavior"
+        runner.plot_learning_curves(axes, type=typeStr, window_size=200)
+
+        plt.legend()
+        fig.suptitle(typeStr)
+        plt.show()
+        plt.savefig(fileRoot + "_" + typeStr + ".svg")
+
+        fig = plt.figure()
+        axes = fig.add_axes([0.2, 0.2, 0.6, 0.6])
+        typeStr = "free_behavior"
+        runner.plot_learning_curves(axes, type=typeStr, window_size=200)
+
+        plt.legend()
+        fig.suptitle(typeStr)
+        plt.show()
+        plt.savefig(fileRoot + "_" + typeStr + ".svg")
+
+        fig = plt.figure()
+        axes = fig.add_axes([0.2, 0.2, 0.6, 0.6])
+        typeStr = "subject_probs"
+        runner.plot_learning_curves(axes, type=typeStr, window_size=200)
+
+        plt.legend()
+        fig.suptitle(typeStr)
+        plt.show()
+        plt.savefig(fileRoot + "_" + typeStr + ".svg")
+
+    sys.exit("Finished script - Figures saved")
+
+    # if type == 'free_behavior':
+    # elif type == 'subject_probs':
+    # elif type == 'subject_behavior':
 
     # runner.fit(2000, mp=True)
     # with open(os.path.join('models', 'probe_class_lrs_class_init.pkl'), 'wb') as f:
